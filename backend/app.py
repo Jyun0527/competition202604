@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
-
+import sqlite3
 import os
 
 app = Flask(__name__)
@@ -8,6 +8,19 @@ CORS(app)  # 允許前端跨來源連線
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# 首頁路由
+@app.route('/')
+def home():
+    return "Flask 後端正在運行"  # 回傳 HTML
+
+
+# API 範例：接收 GET 請求
+@app.route('/api/hello', methods=['GET'])
+def hello():
+    name = request.args.get('name', 'World')
+    return jsonify({"message": f"Hello, {name}!"})
+
 
 #登入 API
 @app.route("/api/login", methods=["POST"])
@@ -23,7 +36,6 @@ def login():
         "message": "登入成功",
         "user": email
     })
-
 
 #儲存植物紀錄
 @app.route("/api/saveRecord", methods=["POST"])
@@ -46,6 +58,49 @@ def save_record():
             "growth": growth
         }
     })
+
+#建立SQLite資料庫
+def init_db():
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS records (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        score INTEGER
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+init_db()
+database.db
+
+#API儲存資料
+@app.route("/save", methods=["POST"])
+def save():
+
+    data = request.json
+    name = data["name"]
+    score = data["score"]
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO records (name, score) VALUES (?, ?)",
+        (name, score)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "saved"})
+
+
+
 
 #AI 建議
 @app.route("/api/aiAdvice", methods=["POST"])
@@ -82,28 +137,11 @@ def upload_photo():
         "status": "success",
         "filename": file.filename
     })
-    
-    
-# 首頁路由
-@app.route('/')
-def home():
-    return "Flask 後端正在運行"  # 回傳 HTML
 
-# API 範例：接收 GET 請求
-@app.route('/api/hello', methods=['GET'])
-def hello():
-    name = request.args.get('name', 'World')
-    return jsonify({"message": f"Hello, {name}!"})
-
-# API 範例：接收 POST 請求
-@app.route('/api/data', methods=['POST'])
-def receive_data():
-    data = request.json  # 假設前端送 JSON
-    print(data)
-    return jsonify({"status": "success", "received": data})
 
 # 啟動 Flask 伺服器
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5500, debug=True)  # debug 模式方便開發
+
 
 
