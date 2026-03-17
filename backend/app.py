@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename  # ★新增：處理上傳檔案名稱，避免危險字元
+from inference.generate import generate_reply
 import sqlite3
 import os
+import requests
+
 
 app = Flask(__name__)
 CORS(app)  # 允許前端跨來源連線
@@ -23,6 +26,14 @@ def hello():
     return jsonify({"message": f"Hello, {name}!"})
 
 
+#模型連接API
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_text = request.json["message"]
+    reply = generate_reply(user_text)
+    return jsonify({"reply":reply})
+
+
 #登入 API
 @app.route("/api/login", methods=["POST"])
 def login():
@@ -37,6 +48,16 @@ def login():
         "message": "登入成功",
         "user": email
     })
+
+
+#測試API
+res = requests.post(
+    "http://127.0.0.1:5000/chat",
+    json={"message": "我今天很累"}
+)
+
+print(res.json())
+
 
 #儲存植物紀錄
 @app.route("/api/saveRecord", methods=["POST"])
@@ -117,18 +138,18 @@ def get_tomato_stage(day):
     else:
         return "成熟期"
 
-# ★新增：智慧植物回覆 + AI建議
+# 新增：智慧植物回覆 + AI建議
 @app.route("/api/plantTalk", methods=["POST"])
 def plant_talk():
 
     data = request.json
 
-   day = int(data.get("day", 0))
-   water_times = int(data.get("water_times", 0))
-   symptoms = data.get("symptoms", [])
-   flower = data.get("flower")
-   fruit = data.get("fruit")
-   sunlight = data.get("sunlight_hours")
+    day = int(data.get("day", 0))
+    water_times = int(data.get("water_times", 0))
+    symptoms = data.get("symptoms", [])
+    flower = data.get("flower")
+    fruit = data.get("fruit")
+    sunlight = data.get("sunlight_hours")
 
     # ---------- 判斷植物生長階段 ----------
     stage = get_tomato_stage(day)
