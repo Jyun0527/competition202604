@@ -1,8 +1,22 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
-import os
+import torch
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-model_path = os.path.join(BASE_DIR, "model", "finetuned")
+model_path = r"C:\VSCODE\projects\competition2026\competition202604\backend\model\finetuned"
 
-tokenizer = AutoTokenizer.from_pretrained(model_path)
-model = AutoModelForCausalLM.from_pretrained(model_path)
+_model = None
+_tokenizer = None
+
+def get_model():
+    global _model, _tokenizer
+    if _model is None:
+        _tokenizer = AutoTokenizer.from_pretrained(
+            model_path,
+            local_files_only=True
+        )
+        _model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            local_files_only=True,
+            torch_dtype=torch.float16,
+            device_map="auto"
+        )
+    return _model, _tokenizer

@@ -50,14 +50,6 @@ def login():
     })
 
 
-#測試API
-res = requests.post(
-    "http://127.0.0.1:5000/chat",
-    json={"message": "我今天很累"}
-)
-
-print(res.json())
-
 
 #儲存植物紀錄
 @app.route("/api/saveRecord", methods=["POST"])
