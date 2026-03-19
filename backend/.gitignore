@@ -1,3 +1,9 @@
+# .gitignore
 venv/
+model/
+training/model/
 __pycache__/
 *.pyc
+database.db
+uploads/
+.env

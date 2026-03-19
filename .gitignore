@@ -125,3 +125,11 @@ __pycache__/
 .env
 .env.*
 !.env.example
+
+# 模型檔案
+model/
+training/model/
+
+# 資料庫與上傳
+database.db
+uploads/
