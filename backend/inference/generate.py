@@ -19,7 +19,7 @@ def generate_reply(user_text):
 
     outputs = model.generate(
         **inputs,
-        max_new_tokens=200,
+        max_new_tokens=300,
         pad_token_id=tokenizer.eos_token_id
     )
 
