@@ -74,10 +74,56 @@ def login():
         return jsonify({"status": "error", "message": "帳號或密碼錯誤"}), 401
 
 
-'''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~刪除紀錄 API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'''
 
-#讓使用者可以刪掉自己不要的植物紀錄
 
+
+'''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~使用者日記顯示管理~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'''
+
+###每天的照顧日記，一株植物可以有很多筆###
+###記錄每天的照顧狀況###
+
+#儲存植物日記
+@app.route("/api/saveRecord", methods=["POST"])
+def save_record():
+    data = request.json
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO plant_records (user_id, plant_id, date, record, mood, growth)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (data.get("user_id"), data.get("plant_id"), data.get("date"), data.get("record"), data.get("mood"), data.get("growth")))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success", "message": "紀錄已儲存"})
+
+
+
+# 取得所有日記
+@app.route("/api/records", methods=["GET"])
+def get_records():
+    user_id = request.args.get("user_id")
+    plant_id = request.args.get("plant_id")
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if plant_id:
+        # 查特定植物的日記
+        cursor.execute("SELECT * FROM plant_records WHERE plant_id = ?", (plant_id,))
+    elif user_id:
+        # 查特定使用者的所有日記
+        cursor.execute("SELECT * FROM plant_records WHERE user_id = ?", (user_id,))
+    else:
+        # 查全部
+        cursor.execute("SELECT * FROM plant_records")
+
+    rows = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return jsonify(rows)
+
+
+
+#刪除日記API
+#讓使用者可以刪掉自己不要的植物日記
 @app.route("/api/deleteRecord/<int:record_id>", methods=["DELETE"])
 def delete_record(record_id):
     conn = get_db()
@@ -86,43 +132,6 @@ def delete_record(record_id):
     conn.commit()
     conn.close()
     return jsonify({"status": "success", "message": "紀錄已刪除"})
-
-
-
-
-'''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~使用者顯示紀錄~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'''
-
-
-#儲存植物紀錄
-@app.route("/api/saveRecord", methods=["POST"])
-def save_record():
-    data = request.json
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO plant_records (user_id, date, record, mood, growth)
-        VALUES (?, ?, ?, ?, ?)
-    """, (data.get("user_id"), data.get("date"), data.get("record"), data.get("mood"), data.get("growth")))
-    conn.commit()
-    conn.close()
-    return jsonify({"status": "success", "message": "紀錄已儲存"})
-
-
-
-#取得所有紀錄
-@app.route("/api/records", methods=["GET"])
-def get_records():
-    user_id = request.args.get("user_id")
-    conn = get_db()
-    cursor = conn.cursor()
-    if user_id:
-        cursor.execute("SELECT * FROM plant_records WHERE user_id = ?", (user_id,))
-    else:
-        cursor.execute("SELECT * FROM plant_records")
-    rows = [dict(row) for row in cursor.fetchall()]
-    conn.close()
-    return jsonify(rows)
-
 
 
 '''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~植物相關功能~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'''
@@ -338,8 +347,56 @@ def upload_photo():
     })
 
 
-#app.register_blueprint(auth_bp)
-#app.register_blueprint(records_bp)
+
+'''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~植物管理（新增植物、命名、選類型）~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'''
+
+###管理使用者養了哪些植物###
+
+# 新增植物
+@app.route("/api/addPlant", methods=["POST"])
+def add_plant():
+    data = request.json
+    user_id = data.get("user_id")
+    name = data.get("name")          # 使用者自己命名，例如「小綠」
+    species = data.get("species")    # 植物類型，例如「聖女番茄」
+    start_date = data.get("start_date")
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO plants (user_id, name, species, start_date)
+        VALUES (?, ?, ?, ?)
+    """, (user_id, name, species, start_date))
+    conn.commit()
+    plant_id = cursor.lastrowid
+    conn.close()
+
+    return jsonify({"status": "success", "message": "植物已新增", "plant_id": plant_id})
+
+# 取得使用者的所有植物
+@app.route("/api/plants", methods=["GET"])
+def get_plants():
+    user_id = request.args.get("user_id")
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM plants WHERE user_id = ?", (user_id,))
+    rows = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return jsonify(rows)
+
+# 刪除植物
+@app.route("/api/deletePlant/<int:plant_id>", methods=["DELETE"])
+def delete_plant(plant_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM plants WHERE id = ?", (plant_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success", "message": "植物已刪除"})
+
+
+'''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~執行程式~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'''
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5500, debug=True)  # debug 模式方便開發

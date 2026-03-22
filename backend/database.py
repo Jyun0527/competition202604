@@ -17,15 +17,27 @@ def init_db():
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         );
 
+        CREATE TABLE IF NOT EXISTS plants (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            species TEXT NOT NULL,
+            start_date TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+
         CREATE TABLE IF NOT EXISTS plant_records (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
+            plant_id INTEGER,
             date TEXT,
             record TEXT,
             mood TEXT,
             growth TEXT,
             photo_path TEXT,
-            FOREIGN KEY (user_id) REFERENCES users(id)
+            FOREIGN KEY (user_id) REFERENCES users(id),
+            FOREIGN KEY (plant_id) REFERENCES plants(id)
         );
     """)
 
