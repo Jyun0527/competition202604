@@ -89,9 +89,9 @@ def save_record():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO plant_records (user_id, plant_id, date, record, mood, growth)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (data.get("user_id"), data.get("plant_id"), data.get("date"), data.get("record"), data.get("mood"), data.get("growth")))
+        INSERT INTO plant_records (email, plant_name, date, text)
+        VALUES (?, ?, ?, ?)
+    """, (data.get("email"), data.get("plant_name"), data.get("date"), data.get("text")))
     conn.commit()
     conn.close()
     return jsonify({"status": "success", "message": "紀錄已儲存"})
@@ -101,17 +101,17 @@ def save_record():
 # 取得所有日記
 @app.route("/api/records", methods=["GET"])
 def get_records():
-    user_id = request.args.get("user_id")
-    plant_id = request.args.get("plant_id")
+    email = request.args.get("email")
+    plant_name = request.args.get("plant_name")
     conn = get_db()
     cursor = conn.cursor()
 
-    if plant_id:
-        # 查特定植物的日記
-        cursor.execute("SELECT * FROM plant_records WHERE plant_id = ?", (plant_id,))
-    elif user_id:
+    if plant_name and email:
+        # 查特定使用者的特定植物日記
+        cursor.execute("SELECT * FROM plant_records WHERE email = ? AND plant_name = ?", (email, plant_name))
+    elif email:
         # 查特定使用者的所有日記
-        cursor.execute("SELECT * FROM plant_records WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT * FROM plant_records WHERE email = ?", (email,))
     else:
         # 查全部
         cursor.execute("SELECT * FROM plant_records")

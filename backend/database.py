@@ -29,15 +29,11 @@ def init_db():
 
         CREATE TABLE IF NOT EXISTS plant_records (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            plant_id INTEGER,
+            email TEXT,
+            plant_name TEXT,
             date TEXT,
-            record TEXT,
-            mood TEXT,
-            growth TEXT,
-            photo_path TEXT,
-            FOREIGN KEY (user_id) REFERENCES users(id),
-            FOREIGN KEY (plant_id) REFERENCES plants(id)
+            text TEXT,
+            photo_path TEXT
         );
     """)
 
