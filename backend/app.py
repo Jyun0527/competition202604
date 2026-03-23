@@ -5,7 +5,7 @@ from inference.generate import generate_reply
 from database import get_db, init_db
 import os
 import bcrypt
-
+import secrets
 
 
 app = Flask(__name__)
@@ -40,19 +40,26 @@ def register():
     email = data.get("email")
     password = data.get("password")
 
+    # ✅ 基本驗證
+    if not email or not password:
+        return jsonify({"status": "error", "message": "email 和密碼不能為空"}), 400
+
     hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO users (email, password) VALUES (?, ?)",
-                      (email, hashed.decode("utf-8")))
+        cursor.execute(
+            "INSERT INTO users (email, password) VALUES (?, ?)",
+            (email, hashed.decode("utf-8"))
+        )
         conn.commit()
         conn.close()
         return jsonify({"status": "success", "message": "註冊成功"})
-    except:
+    except sqlite3.IntegrityError:  # ✅ 明確捕捉重複 email 的錯誤
         return jsonify({"status": "error", "message": "此 email 已被註冊"}), 400
-
+    except Exception as e:
+        return jsonify({"status": "error", "message": "伺服器錯誤"}), 500
 
 
 ####登入####
@@ -62,6 +69,10 @@ def login():
     email = data.get("email")
     password = data.get("password")
 
+    # ✅ 基本驗證
+    if not email or not password:
+        return jsonify({"status": "error", "message": "email 和密碼不能為空"}), 400
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
@@ -69,7 +80,15 @@ def login():
     conn.close()
 
     if user and bcrypt.checkpw(password.encode("utf-8"), user["password"].encode("utf-8")):
-        return jsonify({"status": "success", "message": "登入成功", "user_id": user["id"], "email": email})
+        # ✅ 產生簡易 token（正式環境建議改用 JWT）
+        token = secrets.token_hex(32)
+        return jsonify({
+            "status": "success",
+            "message": "登入成功",
+            "user_id": user["id"],  # ✅ 現在 users 有 id 了
+            "email": email,
+            "token": token
+        })
     else:
         return jsonify({"status": "error", "message": "帳號或密碼錯誤"}), 401
 
@@ -345,7 +364,7 @@ def upload_photo():
 
 '''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~植物管理（新增植物、命名、選類型）~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'''
 
-'''
+
 ###管理使用者養了哪些植物###
 
 # 新增植物
@@ -390,7 +409,7 @@ def delete_plant(plant_id):
     conn.close()
     return jsonify({"status": "success", "message": "植物已刪除"})
 
-'''
+
 
 
 '''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~執行程式~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'''
