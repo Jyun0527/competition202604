@@ -11,7 +11,6 @@ def init_db():
 
     cursor.executescript("""
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -28,12 +27,13 @@ def init_db():
         );
 
         CREATE TABLE IF NOT EXISTS plant_records (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT,
-            plant_name TEXT,
             date TEXT,
+            day TEXT,
+            img TEXT,
+            plant_Name TEXT,
             text TEXT,
-            photo_path TEXT
+            weather TEXT
         );
     """)
 

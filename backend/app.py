@@ -89,9 +89,10 @@ def save_record():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO plant_records (email, plant_name, date, text)
-        VALUES (?, ?, ?, ?)
-    """, (data.get("email"), data.get("plant_name"), data.get("date"), data.get("text")))
+        INSERT INTO plant_records (email, date, day, img, plant_Name, text, weather)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (data.get("email"), data.get("date"), data.get("day"),
+          data.get("img"),  data.get("plant_Name"), data.get("text"), data.get("weather")))
     conn.commit()
     conn.close()
     return jsonify({"status": "success", "message": "紀錄已儲存"})
@@ -326,30 +327,25 @@ AI建議：
 # 上傳植物照片 API
 @app.route("/api/uploadPhoto", methods=["POST"])
 def upload_photo():
-    # 如果沒有照片欄位
     if "photo" not in request.files:
         return jsonify({"error": "沒有照片"}), 400
 
     file = request.files["photo"]
-
-    # 使用 secure_filename 避免危險檔名
     filename = secure_filename(file.filename)
-
-    # 設定儲存路徑
     filepath = os.path.join(UPLOAD_FOLDER, filename)
-
-    # 儲存檔案
     file.save(filepath)
 
     return jsonify({
         "status": "success",
-        "filename": file.filename
+        "filename": filename,
+        "filepath": f"/uploads/{filename}"  # 回傳可存取的路徑
     })
 
 
 
 '''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~植物管理（新增植物、命名、選類型）~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'''
 
+'''
 ###管理使用者養了哪些植物###
 
 # 新增植物
@@ -393,6 +389,8 @@ def delete_plant(plant_id):
     conn.commit()
     conn.close()
     return jsonify({"status": "success", "message": "植物已刪除"})
+
+'''
 
 
 '''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~執行程式~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'''
