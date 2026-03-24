@@ -175,6 +175,7 @@ def get_tomato_stage(day):
 # 植物建議
 @app.route("/api/plantTalk", methods=["POST"])
 def plant_talk():
+<<<<<<< HEAD
     data = request.json
     day = int(data.get("day", 0))
     water_times = int(data.get("water_times", 0))
@@ -234,18 +235,49 @@ def plant_talk():
     symptoms = data.get("symptoms", [])
     flower = data.get("flower")
     fruit = data.get("fruit")
+=======
 
-    # ---------- 判斷植物生長階段 ----------
-    stage = get_tomato_stage(day)
+    data = request.get_json()
+
+water_times = int(data.get("water_times", 0))
+symptoms = data.get("symptoms", [])
+flower = data.get("flower")
+fruit = data.get("fruit")
+sunlight = data.get("sunlight_hours")
+>>>>>>> 4368c5d (update backend plant talk feature)
+
+# ---------- 判斷植物生長階段 ----------
+from datetime import datetime
+
+start_date_str = data.get("start_date")
+
+# 防呆
+if not start_date_str:
+    return jsonify({"error": "缺少 start_date"}), 400
+
+# 轉換日期
+start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+
+# 今天日期
+today = datetime.today()
+
+# 計算天數
+day = (today - start_date).days
+
+# 防止負數
+if day < 0:
+    day = 0
+    
+stage = get_tomato_stage(day)
 
     # ---------- 智慧植物今日回覆 ----------
-    plant_message = ""
+plant_message = ""
 
     if "葉片枯萎" in symptoms:
-        plant_message = " 我今天有點不太舒服，葉子感覺有點渴...( ´•̥̥̥ω•̥̥̥` )"
+        plant_message = " 我今天有點不舒服，葉子感覺有點渴...( ´•̥̥̥ω•̥̥̥` )"
 
     elif "葉片發黃" in symptoms:
-        plant_message = " 我今天有幾片葉子變黃了，希望沒有生病(◞‸◟)"
+        plant_message = " 我今天的葉子變黃了，希望沒有生病(◞‸◟)"
 
     elif water_times == 0:
         plant_message = " 我今天有點口渴，你都沒有給喝水!! (╬☉д⊙) "
