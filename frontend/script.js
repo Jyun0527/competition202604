@@ -158,7 +158,7 @@ function updateDetailView() {
       </div>
     `;
   } else {
-    container.innerHTML = `<p style="color:#999; margin-top:20px;">這個世界還沒有日記紀錄...</p>`;
+    container.innerHTML = `<p style="color:#999; margin-top:20px;">這個植物還沒有日記紀錄...</p>`;
   }
 }
 
@@ -174,7 +174,7 @@ function openDiaryFromView() {
 }
 
 function deleteCurrentPlant() {
-    if(confirm("確定要刪除這個世界嗎？所有的紀錄都會消失！")) {
+    if(confirm("確定要刪除我嗎？ʕ´• ᴥ•̥`ʔ所有的紀錄都會消失ㄛ！")) {
         plants.splice(currentPlant, 1);
         saveData();
         backToWorlds();
