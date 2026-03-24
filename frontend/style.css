@@ -1,0 +1,134 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #eef7f2;
+  text-align: center;
+}
+
+.hidden { display: none; }
+
+.topBar { margin: 10px; }
+
+button { margin: 5px; padding: 8px 12px; cursor: pointer; border-radius: 5px; border: 1px solid #ccc; }
+
+/* Minecraft 風格橫條 */
+#plantList {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 讓內部的 plantCard 置中 */
+    gap: 10px;          /* 橫條之間的間距 */
+}
+
+/* 修改妳原本的 .plantCard */
+.plantCard {
+    background: #3c3c3c !important;
+    color: white !important;
+    width: 100% !important;   /* 讓它填滿父容器 */
+    max-width: 600px !important; /* 如果妳不想要太寬，可以限縮這個值 */
+    margin: 5px 0 !important; /* 移除 auto，因為父層已經 align-items: center */
+    display: flex;
+    justify-content: space-between; /* 名字在左，箭頭在右 */
+    align-items: center;
+    padding: 20px 25px !important;
+    border-radius: 8px; /* 稍微加一點圓角會更精緻 */
+    border: 2px solid #1e1e1e !important;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* 加點陰影增加立體感 */
+}
+
+.plantCard:hover {
+    background: #4a4a4a !important;
+    border-color: #ffffff !important;
+}
+
+.detail-card {
+  background: white;
+  margin: 20px auto;
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.latest-diary {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px dashed #ccc;
+  text-align: left;
+  font-size: 0.9em;
+  color: #444;
+}
+
+img {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.show { display: flex; }
+
+.box {
+  background: white;
+  padding: 20px;
+  width: 90%;
+  max-width: 320px;
+  border-radius: 12px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* 密碼 */
+.password-container {
+  position: relative;
+  width: 100%;
+  max-width: 175px;
+  margin: 10px auto;
+}
+
+.password-container input {
+  width: 100%;
+  padding: 10px 30px 10px 10px;
+  box-sizing: border-box;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+
+textarea {
+  width: 90%;
+  height: 80px;
+}
+
+
+.topBar {
+    display: flex;
+    justify-content: center; /* 按鈕置中 */
+    gap: 15px;              /* 按鈕之間的間距 */
+    margin-bottom: 25px;
+    flex-wrap: wrap;        /* 手機版會自動換行 */
+}
+
+.topBar button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+}
