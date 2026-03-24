@@ -182,56 +182,69 @@ function deleteCurrentPlant() {
 }
 
 // 替換原本的 addPlant 函數
-function addPlant(){
-  let name = document.getElementById("plantName").value.trim();
-  let startDateInput = document.getElementById("setupStartDate").value;
-  
-  // 檢查必填欄位
-  if(!name) return alert("請輸入植物名稱喔！");
-  if(!startDateInput) return alert("請選擇開始種植日期！");
+async function addPlant(){
+    let name = document.getElementById("plantName").value.trim();
+    let startDateInput = document.getElementById("setupStartDate").value;
+    
+    if(!name) return alert("請輸入植物名稱喔！");
+    if(!startDateInput) return alert("請選擇開始種植日期！");
 
-  // 取得所有問卷的資料
-  let water = document.getElementById("setupWater").value;
-  let appearances = Array.from(document.querySelectorAll('.setupAppearance:checked')).map(cb => cb.value).join("、");
-  if(!appearances) appearances = "無特別狀況"; // 如果都沒勾選的預設文字
-  
-  let bloom = document.querySelector('input[name="setupBloom"]:checked').value;
-  let fruit = document.querySelector('input[name="setupFruit"]:checked').value;
-  let sun = document.getElementById("setupSun").value;
+    let water = document.getElementById("setupWater").value;
+    let appearances = Array.from(document.querySelectorAll('.setupAppearance:checked')).map(cb => cb.value).join("、");
+    if(!appearances) appearances = "無特別狀況";
+    let bloom = document.querySelector('input[name="setupBloom"]:checked').value;
+    let fruit = document.querySelector('input[name="setupFruit"]:checked').value;
+    let sun = document.getElementById("setupSun").value;
+    let setupRecordText = `【初始狀態紀錄】\n💧 澆水：${water}\n🌿 外觀：${appearances}\n🌸 開花：${bloom}\n🍅 結果：${fruit}\n☀️ 日照：${sun}`;
 
-  // 將問卷內容整理成一段漂亮的初始紀錄文字
-  let setupRecordText = `【初始狀態紀錄】\n💧 澆水：${water}\n🌿 外觀：${appearances}\n🌸 開花：${bloom}\n🍅 結果：${fruit}\n☀️ 日照：${sun}`;
+    let start = new Date(startDateInput);
+    let now = new Date();
+    let dayDiff = Math.floor((now - start) / (1000 * 60 * 60 * 24)) + 1;
 
-  // 計算從種植日到今天過了幾天
-  let start = new Date(startDateInput);
-  let now = new Date();
-  let dayDiff = Math.floor((now - start) / (1000 * 60 * 60 * 24)) + 1;
+    const email = localStorage.getItem("email");
 
-  // 建立新的植物物件
-  let newPlant = {
-    name: name,
-    startDate: start.toISOString(),
-    baseDay: 0, // 因為已經有了精確的日期，所以基礎天數直接設為 0
-    diary: [
-      {
-        date: new Date().toISOString(), // 紀錄當下的時間
-        day: dayDiff,                   // 計算出來的天數
-        text: setupRecordText,          // 塞入問卷資料
-        weather: "初始設定",
-        img: null
-      }
-    ]
-  };
+    // 串接後端
+    try {
+        const res = await fetch(`${API_URL}/api/addPlant`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "ngrok-skip-browser-warning": "69420"
+            },
+            body: JSON.stringify({
+                email: email,
+                name: name,
+                species: "聖女番茄",
+                start_date: startDateInput
+            })
+        });
+        const data = await res.json();
+        console.log("新增植物:", data);
+    } catch(e) {
+        console.error("新增植物失敗:", e);
+    }
 
-  plants.push(newPlant);
-  saveData(); 
-  renderPlants(); 
-  closeAllModal();
-  
-  // 清空輸入框，方便下次新增
-  document.getElementById("plantName").value = "";
-  document.getElementById("setupStartDate").value = "";
-  document.querySelectorAll('.setupAppearance').forEach(cb => cb.checked = false);
+    let newPlant = {
+        name: name,
+        startDate: start.toISOString(),
+        baseDay: 0,
+        diary: [{
+            date: new Date().toISOString(),
+            day: dayDiff,
+            text: setupRecordText,
+            weather: "初始設定",
+            img: null
+        }]
+    };
+
+    plants.push(newPlant);
+    saveData();
+    renderPlants();
+    closeAllModal();
+
+    document.getElementById("plantName").value = "";
+    document.getElementById("setupStartDate").value = "";
+    document.querySelectorAll('.setupAppearance').forEach(cb => cb.checked = false);
 }
 
 function deletePlant(i){ 
@@ -287,53 +300,77 @@ async function fetchWeatherAPI(lat, lon) {
 }
 
 // --- 儲存日記 (對接後端) ---
+// --- 儲存日記 (對接後端) ---
 async function saveDiary(){
-  let text = document.getElementById("diaryText").value;
-  let fileInput = document.getElementById("photo");
-  let file = fileInput.files[0];
+    let text = document.getElementById("diaryText").value;
+    let fileInput = document.getElementById("photo");
+    let file = fileInput.files[0];
+    const email = localStorage.getItem("email");
 
-  const doSave = async (imgResult = null) => {
-    let p = plants[currentPlant];
-    const newEntry = {
-      email: document.getElementById("welcome").innerText.replace("歡迎 ","").replace(" 🌱",""),
-      plant_Name: p.name,
-      text : text,
-      weather: currentWeatherInfo,
-      date: new Date().toISOString(),
-      day: getDays(p),
-      img: imgResult
+    const doSave = async (imgResult = null) => {
+        let p = plants[currentPlant];
+        const newEntry = {
+            email: email,
+            plant_name: p.name,  // 改成小寫 n
+            text: text,
+            weather: currentWeatherInfo,
+            date: new Date().toISOString(),
+            day: getDays(p),
+            img: imgResult
+        };
+
+        try {
+            document.getElementById("aiReply").innerText = "⏳ 正在儲存並取得 AI 回覆...";
+            
+            // 儲存日記
+            const res = await fetch(`${API_URL}/api/saveRecord`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "ngrok-skip-browser-warning": "69420"
+                },
+                body: JSON.stringify(newEntry)
+            });
+
+            if (res.ok) {
+                // 取得 AI 回覆
+                const aiRes = await fetch(`${API_URL}/api/analyzeDiary`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "ngrok-skip-browser-warning": "69420"
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        plant_name: p.name,
+                        day: getDays(p),
+                        weather: currentWeatherInfo
+                    })
+                });
+                const aiData = await aiRes.json();
+                document.getElementById("aiReply").innerText = "🌱 AI 回覆：" + aiData.reply;
+            }
+        } catch(e) {
+            document.getElementById("aiReply").innerText = "⚠️ 伺服器未連線";
+        }
+
+        p.diary.push(newEntry);
+        saveData();
+        updateDetailView();
+        
+        // 【修改重點】：拿掉自動關閉的倒數計時！
+        // 我們只要在背景偷偷清空剛才輸入的文字和照片就好，讓彈窗乖乖開著
+        document.getElementById("diaryText").value = "";
+        fileInput.value = "";
     };
 
-    try {
-      document.getElementById("aiReply").innerText = "⏳ 正在傳送至伺服器...";
-      const res = await fetch(`${API_URL}/api/saveRecord`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" ,"ngrok-skip-browser-warning": "69420"},
-        body: JSON.stringify(newEntry)
-      });
-      if (res.ok) {
-        document.getElementById("aiReply").innerText = "✅ 儲存成功！AI 回覆：" + generateAI(getDays(p));
-      }
-    } catch (e) {
-      document.getElementById("aiReply").innerText = "⚠️ 伺服器未連線，已存於本地。AI 回覆：" + generateAI(getDays(p));
+    if(file) {
+        let reader = new FileReader();
+        reader.onload = () => doSave(reader.result);
+        reader.readAsDataURL(file);
+    } else {
+        doSave();
     }
-
-    p.diary.push(newEntry);
-    saveData(); renderPlants();// 重新渲染畫面
-    setTimeout(() => {
-        document.getElementById("diaryText").value="";
-        fileInput.value="";
-        closeAllModal();
-    }, 1500);
-  };
-
-  if(file) {
-    let reader = new FileReader();
-    reader.onload = () => doSave(reader.result);
-    reader.readAsDataURL(file);
-  } else {
-    doSave();
-  }
 }
 
 function getDays(p){
