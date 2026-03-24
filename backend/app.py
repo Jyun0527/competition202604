@@ -6,7 +6,8 @@ from database import get_db, init_db
 import os
 import bcrypt
 import secrets
-
+import sqlite3
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)  # 允許前端跨來源連線
@@ -172,24 +173,52 @@ def get_tomato_stage(day):
         return "成熟期"
 
 
-# 植物建議
+# 植物聊天 API：接收前端送來的植物狀態，回傳植物訊息與 AI 建議
 @app.route("/api/plantTalk", methods=["POST"])
 def plant_talk():
-<<<<<<< HEAD
-    data = request.json
-    day = int(data.get("day", 0))
-    water_times = int(data.get("water_times", 0))
-    symptoms = data.get("symptoms", [])
-    flower = data.get("flower")
-    fruit = data.get("fruit")
+    data = request.get_json()
+
+    # 讀取使用者輸入的資料，若沒有就給預設值
+    water_times = int(data.get("water_times", 0))   # 今日澆水次數
+    symptoms = data.get("symptoms", [])             # 植物症狀列表
+    flower = data.get("flower", False)              # 是否開花
+    fruit = data.get("fruit", False)                # 是否結果
+
+    # 取得種植開始日期
+    start_date_str = data.get("start_date")
+
+    # 若沒有提供 start_date，就回傳錯誤訊息
+    if not start_date_str:
+        return jsonify({"status": "error", "message": "缺少 start_date"}), 400
+
+    try:
+        # 將字串格式的日期轉成 datetime 物件
+        # 格式必須是 YYYY-MM-DD，例如 2026-03-24
+        start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+    except ValueError:
+        # 若日期格式錯誤，回傳錯誤訊息
+        return jsonify({"status": "error", "message": "start_date 格式錯誤，應為 YYYY-MM-DD"}), 400
+
+    # 取得今天日期
+    today = datetime.today()
+
+    # 計算植物已種植幾天
+    day = (today - start_date).days
+
+    # 若開始日期比今天晚，避免出現負數
+    if day < 0:
+        day = 0
+
+    # 根據種植天數判斷目前植物生長階段
     stage = get_tomato_stage(day)
 
+    # 根據症狀與澆水狀況，生成植物今日訊息
     if "葉片枯萎" in symptoms:
         plant_message = "我今天有點不太舒服，葉子感覺有點渴...( ´•̥̥̥ω•̥̥̥` )"
     elif "葉片發黃" in symptoms:
         plant_message = "我今天有幾片葉子變黃了，希望沒有生病(◞‸◟)"
     elif water_times == 0:
-        plant_message = "我今天有點口渴，你都沒有給喝水!! (╬☉д⊙)"
+        plant_message = "我今天有點口渴，你都沒有給我喝水!! (╬☉д⊙)"
     else:
         plant_message = "我今天感覺還不錯，正在努力長大！ヽ(●´∀`●)ﾉ"
 
@@ -224,157 +253,94 @@ def plant_talk():
     })
 
 
-'''
+# # ---------- AI建議 ----------
+#     ai_advice = ""
 
-# 新增：智慧植物回覆 + AI建議
-@app.route("/api/plantTalk", methods=["POST"])
-def plant_talk():
-    data = request.json
-    day = int(data.get("day", 0))
-    water_times = int(data.get("water_times", 0))
-    symptoms = data.get("symptoms", [])
-    flower = data.get("flower")
-    fruit = data.get("fruit")
-=======
+#     if "葉片發黃" in symptoms:
 
-    data = request.get_json()
+#         ai_advice = f"""
+# AI建議：
+# 目前植物處於{stage}，
+# 葉片出現發黃情況，
+# 可能與水分或養分不足有關。
 
-water_times = int(data.get("water_times", 0))
-symptoms = data.get("symptoms", [])
-flower = data.get("flower")
-fruit = data.get("fruit")
-sunlight = data.get("sunlight_hours")
->>>>>>> 4368c5d (update backend plant talk feature)
+# 建議：
+# 1. 檢查最近澆水是否足夠
+# 2. 若天氣晴朗可增加日照
+# 3. 觀察是否持續擴散
+# """
 
-# ---------- 判斷植物生長階段 ----------
-from datetime import datetime
+#     elif "葉片枯萎" in symptoms:
 
-start_date_str = data.get("start_date")
+#         ai_advice = f"""
+# AI建議：
+# 目前植物處於{stage}，
+# 葉片出現枯萎情況，
+# 可能與缺水或高溫有關。
 
-# 防呆
-if not start_date_str:
-    return jsonify({"error": "缺少 start_date"}), 400
+# 建議：
+# 1. 適量增加澆水
+# 2. 避免正午強光
+# 3. 保持土壤濕度穩定
+# """
 
-# 轉換日期
-start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+#     elif water_times == 0:
 
-# 今天日期
-today = datetime.today()
+#         ai_advice = f"""
+# AI建議：
+# 目前植物處於{stage}，
+# 今日沒有澆水。
 
-# 計算天數
-day = (today - start_date).days
+# 建議：
+# 1. 視天氣情況適量補充水分
+# 2. 保持每日穩定澆水習慣
+# """
 
-# 防止負數
-if day < 0:
-    day = 0
-    
-stage = get_tomato_stage(day)
+#     elif stage == "開花期" and flower == False:
 
-    # ---------- 智慧植物今日回覆 ----------
-plant_message = ""
+#         ai_advice = f"""
+# AI建議：
+# 目前植物理論上已接近開花期，
+# 若尚未開花可能與光照或養分有關。
 
-    if "葉片枯萎" in symptoms:
-        plant_message = " 我今天有點不舒服，葉子感覺有點渴...( ´•̥̥̥ω•̥̥̥` )"
+# 建議：
+# 1. 增加日照時間
+# 2. 保持穩定水分
+# """
 
-    elif "葉片發黃" in symptoms:
-        plant_message = " 我今天的葉子變黃了，希望沒有生病(◞‸◟)"
+#     elif stage == "結果期" and fruit == False:
 
-    elif water_times == 0:
-        plant_message = " 我今天有點口渴，你都沒有給喝水!! (╬☉д⊙) "
+#         ai_advice = f"""
+# AI建議：
+# 目前植物應逐漸進入結果期，
+# 若尚未結果可以持續觀察。
 
-    else:
-        plant_message = " 我今天感覺還不錯，正在努力長大！ヽ(●´∀`●)ﾉ"
+# 建議：
+# 1. 保持充足日照
+# 2. 適量補充養分
+# """
 
-    # ---------- AI建議 ----------
-    ai_advice = ""
+#     else:
 
-    if "葉片發黃" in symptoms:
+#         ai_advice = f"""
+# AI建議：
+# 目前植物處於{stage}，
+# 整體狀況看起來穩定。
 
-        ai_advice = f"""
-AI建議：
-目前植物處於{stage}，
-葉片出現發黃情況，
-可能與水分或養分不足有關。
-
-建議：
-1. 檢查最近澆水是否足夠
-2. 若天氣晴朗可增加日照
-3. 觀察是否持續擴散
-"""
-
-    elif "葉片枯萎" in symptoms:
-
-        ai_advice = f"""
-AI建議：
-目前植物處於{stage}，
-葉片出現枯萎情況，
-可能與缺水或高溫有關。
-
-建議：
-1. 適量增加澆水
-2. 避免正午強光
-3. 保持土壤濕度穩定
-"""
-
-    elif water_times == 0:
-
-        ai_advice = f"""
-AI建議：
-目前植物處於{stage}，
-今日沒有澆水。
-
-建議：
-1. 視天氣情況適量補充水分
-2. 保持每日穩定澆水習慣
-"""
-
-    elif stage == "開花期" and flower == False:
-
-        ai_advice = f"""
-AI建議：
-目前植物理論上已接近開花期，
-若尚未開花可能與光照或養分有關。
-
-建議：
-1. 增加日照時間
-2. 保持穩定水分
-"""
-
-    elif stage == "結果期" and fruit == False:
-
-        ai_advice = f"""
-AI建議：
-目前植物應逐漸進入結果期，
-若尚未結果可以持續觀察。
-
-建議：
-1. 保持充足日照
-2. 適量補充養分
-"""
-
-    else:
-
-        ai_advice = f"""
-AI建議：
-目前植物處於{stage}，
-整體狀況看起來穩定。
-
-建議：
-1. 維持規律澆水
-2. 保持充足日照
-3. 持續觀察葉片與生長情況
-"""
+# 建議：
+# 1. 維持規律澆水
+# 2. 保持充足日照
+# 3. 持續觀察葉片與生長情況
+# """
 
 
-    return jsonify({
-        "status": "success",
-        "plantStage": stage,
-        "plantMessage": plant_message,
-        "aiAdvice": ai_advice
-    })
-
-'''
-
+#     return jsonify({
+#         "status": "success",
+#         "plantStage": stage,
+#         "plantMessage": plant_message,
+#         "aiAdvice": ai_advice
+#     }) 
+ 
 # 上傳植物照片 API
 @app.route("/api/uploadPhoto", methods=["POST"])
 def upload_photo():
