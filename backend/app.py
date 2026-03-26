@@ -157,20 +157,6 @@ def delete_record(record_id):
 
 '''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~植物相關功能~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'''
 
-# ★新增：判斷聖女番茄生長階段
-def get_tomato_stage(day):
-    if day <= 10:
-        return "發芽期"
-    elif day <= 25:
-        return "幼苗期"
-    elif day <= 40:
-        return "營養生長期"
-    elif day <= 50:
-        return "開花期"
-    elif day <= 70:
-        return "結果期"
-    else:
-        return "成熟期"
 
 
 # 植物聊天 API：接收前端送來的植物狀態，回傳植物訊息與 AI 建議
@@ -183,6 +169,9 @@ def plant_talk():
     symptoms = data.get("symptoms", [])             # 植物症狀列表
     flower = data.get("flower", False)              # 是否開花
     fruit = data.get("fruit", False)                # 是否結果
+    leaf_over_five = data.get("leaf_over_five", False)   # 葉片數是否五片以上
+    germinated = data.get("germinated", False)           # 是否發芽
+    none_stage = data.get("none_stage", False)           # 都沒有
 
     # 取得種植開始日期
     start_date_str = data.get("start_date")
@@ -209,14 +198,25 @@ def plant_talk():
     if day < 0:
         day = 0
 
-    # 根據種植天數判斷目前植物生長階段
-    stage = get_tomato_stage(day)
+    
+    if fruit:
+        stage = "結果期"
+    elif flower:
+        stage = "開花期"
+    elif leaf_over_five:
+        stage = "生長期"
+    elif germinated:
+        stage = "幼苗期"
+    else:
+        stage = "發芽前階段"
 
     # 根據症狀與澆水狀況，生成植物今日訊息
     if "葉片枯萎" in symptoms:
         plant_message = "我今天有點不太舒服，葉子感覺有點渴...( ´•̥̥̥ω•̥̥̥` )"
     elif "葉片發黃" in symptoms:
         plant_message = "我今天有幾片葉子變黃了，希望沒有生病(◞‸◟)"
+    elif "葉片斑點" in symptoms:
+        plant_message = "我今天葉子上出現了一些斑點，主人可以多看看我嗎？(｡•́︿•̀｡)"
     elif water_times == 0:
         plant_message = "我今天有點口渴，你都沒有給我喝水!! (╬☉д⊙)"
     else:
@@ -238,6 +238,9 @@ def plant_talk():
     目前症狀：{', '.join(symptoms) if symptoms else '無'}
     是否開花：{'是' if flower else '否'}
     是否結果：{'是' if fruit else '否'}
+    葉片數是否五片以上：{'是' if leaf_over_five else '否'}
+    是否發芽：{'是' if germinated else '否'}
+    是否都沒有：{'是' if none_stage else '否'}
 
     請使用繁體中文回覆。
     
