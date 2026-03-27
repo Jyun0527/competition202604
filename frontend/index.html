@@ -75,7 +75,7 @@
 </div>
 
 <div class="modal" id="plantModal">
-  <div class="box" style="text-align: left;">
+  <div class="box" style="text-align: left; max-height: 85vh; overflow-y: auto;">
     <h3 style="text-align: center;">🌱 新增植物與初始紀錄</h3>
     
     <label><b>植物名稱</b></label>
@@ -96,6 +96,7 @@
     <div style="margin-bottom: 15px; padding-left: 5px;">
       <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupAppearance" value="葉片發黃"> 葉片發黃</label>
       <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupAppearance" value="葉片枯萎"> 葉片枯萎</label>
+      <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupAppearance" value="葉片斑點"> 葉片斑點</label>
       <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupAppearance" value="看起來健康"> 看起來健康</label>
     </div>
 
@@ -111,7 +112,14 @@
       <label><input type="radio" name="setupFruit" value="沒有" checked> 沒有</label>
     </div>
 
-    <label><b>⑥ 日照時間 ☀️</b></label>
+    <label><b>⑥ 生長進度 (可複選) 🌱</b></label>
+    <div style="margin-bottom: 15px; padding-left: 5px;">
+      <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupGrowth" value="葉片數五片以上"> 葉片數五片以上</label>
+      <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupGrowth" value="發芽"> 發芽</label>
+      <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupGrowth" value="都沒有"> 都沒有</label>
+    </div>
+
+    <label><b>⑦ 日照時間 ☀️</b></label>
     <select id="setupSun" style="width: 100%; margin-bottom: 20px; padding: 8px; box-sizing: border-box;">
       <option value="0~2小時">0~2 小時</option>
       <option value="3~5小時">3~5 小時</option>
