@@ -1,854 +1,241 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Caveat:wght@500;700&display=swap');
-
-/* =====================
-   全域變數與重置
-   ===================== */
-:root {
-  --bg: #f7f3ee;
-  --white: #fffefb;
-  --green: #5a8a5a;
-  --green-dark: #3d6b3d;
-  --green-light: #b8d4b8;
-  --green-pale: #eaf2ea;
-  --peach: #e8a882;
-  --peach-light: #faeade;
-  --yellow: #e8cc7a;
-  --yellow-pale: #fef8e8;
-  --brown: #5c3d2e;
-  --text: #3d2b1f;
-  --muted: #a09080;
-  --border: #e0d8d0;
-  --shadow: 0 4px 16px rgba(100,70,50,0.10);
-  --shadow-hover: 0 8px 28px rgba(100,70,50,0.16);
-  --radius: 16px;
-  --radius-lg: 22px;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Quicksand', sans-serif;
-  background: var(--bg);
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23c8b8a8' fill-opacity='0.07'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  color: var(--text);
-  min-height: 100vh;
-  text-align: center;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* =====================
-   登入頁面
-   ===================== */
-#loginPage {
-  max-width: 360px;
-  margin: 0 auto;
-  padding: 60px 24px 40px;
-}
-
-#loginPage h1 {
-  font-family: 'Caveat', cursive;
-  font-size: 36px;
-  color: var(--green);
-  margin-bottom: 6px;
-}
-
-#loginPage > p {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 32px;
-}
-
-#loginPage input {
-  width: 100%;
-  padding: 14px 16px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 14px;
-  font-family: 'Quicksand', sans-serif;
-  background: var(--white);
-  color: var(--text);
-  margin-bottom: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  outline: none;
-}
-
-#loginPage input:focus {
-  border-color: var(--green-light);
-  box-shadow: 0 0 0 3px rgba(90,138,90,0.12);
-}
-
-/* =====================
-   密碼欄位
-   ===================== */
-.password-container {
-  position: relative;
-  width: 100%;
-  max-width: 300px;
-  margin: 0 auto 12px;
-}
-
-.password-container input {
-  width: 100%;
-  padding: 0 44px 0 16px;      /* ⭐ 改這行（上下不要12px） */
-  box-sizing: border-box;
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  font-size: 14px;
-  font-family: 'Quicksand', sans-serif;
-  background: var(--white);
-  color: var(--text);
-  outline: none;
-  height: 40px;                /* ⭐ 加這行 */
-}
-
-.password-container input:focus {
-  border-color: var(--green-light);
-  box-shadow: 0 0 0 3px rgba(90,138,90,0.12);
-}
-
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-
-.eye-icon {
-  position: absolute;
-  right: 14px;
-  top: 40%;
-  transform: translateY(-50%);
-}
-
-.eye-icon:hover {
-  opacity: 1;
-}
-
-
-/* =====================
-   按鈕
-   ===================== */
-button {
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  border-radius: 50px;
-  transition: all 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
-  min-height: 48px;
-  padding: 12px 22px;
-  font-size: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  letter-spacing: 0.2px;
-}
-
-button:active {
-  transform: scale(0.96) !important;
-}
-
-/* 主要綠色按鈕 */
-#loginPage button:first-of-type,
-.btn-primary {
-  width: 100%;
-  background: linear-gradient(135deg, var(--green-dark), var(--green));
-  color: white;
-  box-shadow: 0 4px 14px rgba(90,138,90,0.35);
-  margin-bottom: 10px;
-}
-
-#loginPage button:first-of-type:hover,
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(90,138,90,0.4);
-}
-
-/* 次要按鈕 */
-#loginPage button:last-of-type,
-.btn-secondary {
-  width: 100%;
-  background: var(--white);
-  color: var(--green);
-  border: 2px solid var(--green-light);
-  box-shadow: var(--shadow);
-}
-
-#loginPage button:last-of-type:hover,
-.btn-secondary:hover {
-  background: var(--green-pale);
-  border-color: var(--green);
-  transform: translateY(-2px);
-}
-
-/* =====================
-   主頁面
-   ===================== */
-#mainPage {
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-/* Header */
-#worldListArea > h2,
-#welcome {
-  font-family: 'Caveat', cursive;
-  font-size: 28px;
-  color: var(--brown);
-  padding: 28px 20px 8px;
-}
-
-/* Top Bar */
-.topBar {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 16px 20px;
-  flex-wrap: wrap;
-}
-
-.topBar button {
-  min-height: 44px;
-  padding: 10px 18px;
-  font-size: 13px;
-  background: var(--white);
-  color: var(--green-dark);
-  border: 1.5px solid var(--border);
-  border-radius: 50px;
-  box-shadow: var(--shadow);
-}
-
-.topBar button:hover {
-  border-color: var(--green-light);
-  background: var(--green-pale);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-}
-
-.topBar button:first-child {
-  background: linear-gradient(135deg, var(--green-dark), var(--green));
-  color: white;
-  border: none;
-  box-shadow: 0 4px 14px rgba(90,138,90,0.3);
-}
-
-.topBar button:first-child:hover {
-  background: linear-gradient(135deg, #2d5a2d, var(--green-dark));
-  box-shadow: 0 8px 20px rgba(90,138,90,0.4);
-}
-
-.topBar button:last-child {
-  color: var(--peach);
-  border-color: #f0d0bc;
-}
-
-.topBar button:last-child:hover {
-  background: var(--peach-light);
-  border-color: var(--peach);
-}
-
-/* Section label */
-.section-label {
-  font-family: 'Caveat', cursive;
-  font-size: 20px;
-  color: var(--green);
-  padding: 0 20px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-align: left;
-}
-
-.section-label::after {
-  content: '';
-  flex: 1;
-  height: 1.5px;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--green-light) 0,
-    var(--green-light) 6px,
-    transparent 6px,
-    transparent 12px
-  );
-}
-
-/* =====================
-   植物卡片列表
-   ===================== */
-#plantList {
-  padding: 0 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.plantCard {
-  background: var(--white);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  border: 1.5px solid var(--border);
-  box-shadow: var(--shadow);
-  transition: all 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
-  text-align: left;
-  position: relative;
-  overflow: hidden;
-  min-height: 72px;
-}
-
-.plantCard::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 4px;
-  background: linear-gradient(180deg, var(--green), var(--yellow));
-  border-radius: 4px 0 0 4px;
-}
-
-.plantCard:hover {
-  border-color: var(--green-light);
-  transform: translateY(-3px) scale(1.01);
-  box-shadow: var(--shadow-hover);
-}
-
-.plantCard h3 {
-  font-family: 'Caveat', cursive;
-  font-size: 20px;
-  color: var(--brown);
-  margin-bottom: 2px;
-}
-
-.plantCard p {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.plantCard-arrow {
-  margin-left: auto;
-  color: var(--green-light);
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.day-pill {
-  background: var(--yellow-pale);
-  border: 1.5px solid var(--yellow);
-  color: var(--brown);
-  padding: 4px 12px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-/* Plant icon */
-.plant-emoji-box {
-  width: 48px;
-  height: 48px;
-  background: var(--green-pale);
-  border-radius: 14px;
-  border: 1.5px dashed var(--green-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-/* =====================
-   植物詳情頁
-   ===================== */
-#detailView {
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-#detailView .topBar {
-  justify-content: flex-start;
-  padding-top: 16px;
-}
-
-#viewingPlantName {
-  font-family: 'Caveat', cursive;
-  font-size: 24px;
-  color: var(--brown);
-  margin-left: 8px;
-}
-
-.detail-card {
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  margin: 0 16px 20px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  border: 1.5px solid var(--border);
-}
-
-.detail-card-header {
-  background: var(--green-pale);
-  padding: 20px;
-  border-bottom: 1.5px dashed var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#plantStatusInfo h3 {
-  font-family: 'Caveat', cursive;
-  font-size: 26px;
-  color: var(--brown);
-}
-
-#plantStatusInfo p {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 3px;
-}
-
-.big-day-circle {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: white;
-  border: 2px solid var(--green-light);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 3px 12px rgba(90,138,90,0.15);
-  flex-shrink: 0;
-}
-
-.big-day-circle .num {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--green);
-  line-height: 1;
-}
-
-.big-day-circle .lbl {
-  font-size: 9px;
-  color: var(--muted);
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  padding: 16px;
-  border-bottom: 1px dashed var(--border);
-}
-
-.action-buttons button {
-  min-height: 44px;
-  padding: 10px 16px;
-  font-size: 13px;
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  color: var(--green-dark);
-  box-shadow: var(--shadow);
-  border-radius: 50px;
-}
-
-.action-buttons button:first-child {
-  background: linear-gradient(135deg, var(--green-dark), var(--green));
-  color: white;
-  border: none;
-  box-shadow: 0 4px 12px rgba(90,138,90,0.3);
-}
-
-.action-buttons button:first-child:hover {
-  box-shadow: 0 8px 20px rgba(90,138,90,0.4);
-  transform: translateY(-2px);
-}
-
-.action-buttons button:hover {
-  border-color: var(--green-light);
-  background: var(--green-pale);
-  transform: translateY(-2px);
-}
-
-.action-buttons button[style*="red"] {
-  color: var(--peach) !important;
-  border-color: #f0d0bc !important;
-}
-
-.action-buttons button[style*="red"]:hover {
-  background: var(--peach-light) !important;
-  border-color: var(--peach) !important;
-}
-
-/* =====================
-   最新日記
-   ===================== */
-.latest-diary {
-  padding: 16px;
-  text-align: left;
-}
-
-.latest-diary strong {
-  font-size: 11px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.diary-content-box {
-  background: var(--peach-light);
-  border-radius: 14px;
-  padding: 14px;
-  border: 1px solid #f0d0bc;
-  margin-bottom: 10px;
-}
-
-.diary-content-box p {
-  font-size: 14px;
-  color: var(--brown);
-  line-height: 1.75;
-}
-
-.diary-meta {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.meta-tag {
-  background: white;
-  color: var(--muted);
-  border: 1px solid var(--border);
-  padding: 3px 10px;
-  border-radius: 8px;
-  font-size: 11px;
-}
-
-.ai-reply-box {
-  background: var(--green-pale);
-  border-radius: 14px;
-  padding: 14px;
-  border: 1.5px dashed var(--green-light);
-  margin-top: 10px;
-}
-
-.ai-reply-box .ai-label {
-  font-family: 'Caveat', cursive;
-  font-size: 16px;
-  color: var(--green);
-  margin-bottom: 6px;
-}
-
-.ai-reply-box p {
-  font-size: 13px;
-  color: #4a6a4a;
-  line-height: 1.7;
-  text-align: left;
-}
-
-/* =====================
-   Modal
-   ===================== */
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(92, 61, 46, 0.35);
-  backdrop-filter: blur(4px);
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 16px;
-}
-
-.modal.show {
-  display: flex;
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.box {
-  background: var(--white);
-  padding: 24px;
-  width: 100%;
-  max-width: 340px;
-  border-radius: var(--radius-lg);
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(92,61,46,0.2);
-  border: 1.5px solid var(--border);
-  animation: slideUp 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
-  text-align: left;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.box h3 {
-  font-family: 'Caveat', cursive;
-  font-size: 24px;
-  color: var(--brown);
-  margin-bottom: 16px;
-  text-align: center;
-}
-
-.box input,
-.box select,
-.box textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 14px;
-  font-family: 'Quicksand', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  margin-bottom: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  outline: none;
-}
-
-.box input:focus,
-.box select:focus,
-.box textarea:focus {
-  border-color: var(--green-light);
-  box-shadow: 0 0 0 3px rgba(90,138,90,0.12);
-  background: var(--white);
-}
-
-.box textarea {
-  height: 90px;
-  resize: none;
-  line-height: 1.6;
-}
-
-.box button {
-  width: 100%;
-  margin-bottom: 8px;
-}
-
-.box button:first-of-type {
-  background: linear-gradient(135deg, var(--green-dark), var(--green));
-  color: white;
-  box-shadow: 0 4px 14px rgba(90,138,90,0.3);
-}
-
-.box button:first-of-type:hover {
-  box-shadow: 0 8px 20px rgba(90,138,90,0.4);
-  transform: translateY(-2px);
-}
-
-.box button[style*="888"] {
-  background: var(--bg) !important;
-  color: var(--muted) !important;
-  border: 1.5px solid var(--border) !important;
-  box-shadow: none !important;
-}
-
-.box button[style*="888"]:hover {
-  background: var(--border) !important;
-  color: var(--brown) !important;
-}
-
-/* Modal label */
-.box label {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--brown);
-  display: block;
-  margin-bottom: 6px;
-}
-
-/* Modal checkbox / radio */
-.box input[type="checkbox"],
-.box input[type="radio"] {
-  width: auto;
-  margin-bottom: 0;
-  margin-right: 6px;
-  accent-color: var(--green);
-}
-
-/* =====================
-   天氣顯示
-   ===================== */
-#weatherDisplay {
-  font-size: 13px;
-  color: var(--green-dark);
-  background: var(--green-pale);
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid var(--green-light);
-  margin-bottom: 10px;
-  line-height: 1.6;
-}
-
-#citySelect {
-  margin-bottom: 10px;
-}
-
-/* =====================
-   上傳照片
-   ===================== */
-input[type="file"] {
-  width: 100%;
-  font-size: 13px;
-  color: var(--muted);
-  padding: 10px;
-  border: 1.5px dashed var(--border);
-  border-radius: var(--radius);
-  background: var(--bg);
-  margin-bottom: 12px;
-  cursor: pointer;
-}
-
-input[type="file"]:hover {
-  border-color: var(--green-light);
-  background: var(--green-pale);
-}
-
-/* AI 回覆（日記Modal內） */
-#aiReply {
-  font-size: 13px;
-  color: #4a6a4a;
-  background: var(--green-pale);
-  border: 1.5px dashed var(--green-light);
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin-top: 10px;
-  line-height: 1.7;
-  min-height: 44px;
-  text-align: left;
-}
-
-/* =====================
-   歷史紀錄
-   ===================== */
-#historyList > div {
-  background: var(--peach-light);
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 10px;
-  border: 1px solid #f0d0bc;
-  text-align: left;
-}
-
-#historyList img {
-  width: 100%;
-  border-radius: 12px;
-  margin-top: 10px;
-  border: 1.5px solid var(--border);
-}
-
-/* =====================
-   圖片
-   ===================== */
-img {
-  width: 100%;
-  border-radius: 12px;
-  margin-top: 8px;
-  border: 1.5px solid var(--border);
-}
-
-/* =====================
-   訊息提示
-   ===================== */
-#loginMsg {
-  color: var(--peach);
-  font-size: 13px;
-  margin-top: 8px;
-  min-height: 20px;
-}
-
-#regMsg {
-  font-size: 13px;
-  margin-top: 4px;
-  min-height: 20px;
-}
-
-/* =====================
-   手機版優化
-   ===================== */
-@media (max-width: 480px) {
-  button {
-    min-height: 52px;
-    font-size: 15px;
-  }
-
-  .plantCard {
-    padding: 18px;
-    min-height: 80px;
-  }
-
-  .plantCard h3 {
-    font-size: 22px;
-  }
-
-  .box {
-    padding: 20px;
-    max-width: 100%;
-    border-radius: 20px 20px 0 0;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-height: 90vh;
-    animation: slideFromBottom 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
-  }
-
-  @keyframes slideFromBottom {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-
-  .modal {
-    align-items: flex-end;
-    padding: 0;
-  }
-
-  .action-buttons button {
-    flex: 1;
-    min-width: 0;
-  }
-}
-
-/* =====================
-   滾動條美化
-   ===================== */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--green-light);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--green);
-}
-
-
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>植物療癒日記系統</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="loginPage">
+  <h1>🌱 植物療癒日記</h1>
+  <input id="username" placeholder="帳號">
+  <div class="password-container">
+    <input id="password" type="password" placeholder="密碼">
+    <span class="eye-icon" onclick="togglePassword('password')">👁️</span>
+  </div>
+  <button onclick="login()">登入</button>
+  <button onclick="openModal('registerModal')">註冊新帳號</button>
+  <p id="loginMsg" style="color:red;"></p>
+</div>
+
+<div id="mainPage" class="hidden">
+  <div id="worldListArea">
+    <h2 id="welcome"></h2>
+    <div class="topBar">
+      <button onclick="openModal('guideModal')">📖 說明</button>
+      <button onclick="openModal('plantModal')">➕ 建立新植物</button>
+      <button onclick="logout()">🚪 登出</button>
+    </div>
+    <div id="plantList"></div> </div>
+
+  <div id="detailView" class="hidden">
+    <div class="topBar">
+      <button onclick="backToWorlds()">⬅️ 回到列表</button>
+      <h2 id="viewingPlantName" style="display:inline; margin-left:10px;">植物名稱</h2>
+    </div>
+    
+    <div class="detail-card">
+        <div id="plantStatusInfo"></div> <hr>
+        <div class="action-buttons">
+            <button onclick="openDiaryFromView()">₍ᐢ..ᐢ₎✎ 寫今日日記</button>
+            <button onclick="openHistoryView()">📅 歷史紀錄</button>
+            <button onclick="deleteCurrentPlant()" style="color:red">🗑️ 刪除植物</button>
+            <button onclick="endPlanting()">🎋 結束種植</button>
+        </div>
+        <div id="latestDiaryInView"></div> </div>
+  </div>
+</div>
+
+<div class="modal" id="guideModal">
+  <div class="box">
+    <h3>使用說明</h3>
+    <p>🌱 新增植物 → 每天寫日記 → AI陪伴你</p>
+    <p>📸 可上傳每日照片</p>
+    <p>📅 可查看歷史紀錄</p>
+    <button onclick="closeAllModal()">知道了</button>
+  </div>
+</div>
+
+<div class="modal" id="registerModal">
+  <div class="box">
+    <h3>註冊新帳號</h3>
+    <input id="regUsername" placeholder="帳號">
+    <div class="password-container">
+      <input id="regPassword" type="password" placeholder="設定密碼">
+      <span class="eye-icon" onclick="togglePassword('regPassword')">👁️</span>
+    </div>
+    <div class="password-container">
+      <input id="regConfirmPassword" type="password" placeholder="再次輸入密碼">
+      <span class="eye-icon" onclick="togglePassword('regConfirmPassword')">👁️</span>
+    </div>
+    <button onclick="register()">確認註冊</button>
+    <button onclick="closeAllModal()" style="background:#888;">取消</button>
+    <p id="regMsg" style="color:red;"></p>
+  </div>
+</div>
+
+<div class="modal" id="plantModal">
+  <div class="box" style="text-align: left; max-height: 85vh; overflow-y: auto;">
+    <h3 style="text-align: center;">🌱 新增植物與初始紀錄</h3>
+    
+    <label><b>植物名稱</b></label>
+    <input id="plantName" placeholder="幫植物取個名字吧！" style="width: 100%; margin-bottom: 15px; padding: 8px; box-sizing: border-box;">
+    
+    <label><b>① 開始種植日期 ‼️</b></label>
+    <input type="date" id="setupStartDate" style="width: 100%; margin-bottom: 15px; padding: 8px; box-sizing: border-box;">
+
+    <label><b>② 今日澆水次數 💧</b></label>
+    <select id="setupWater" style="width: 100%; margin-bottom: 15px; padding: 8px; box-sizing: border-box;">
+      <option value="0次">0 次</option>
+      <option value="1次">1 次</option>
+      <option value="2次">2 次</option>
+      <option value="3次">3 次</option>
+    </select>
+
+    <label><b>③ 植物外觀 (可複選) 🌿</b></label>
+    <div style="margin-bottom: 15px; padding-left: 5px;">
+      <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupAppearance" value="葉片發黃"> 葉片發黃</label>
+      <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupAppearance" value="葉片枯萎"> 葉片枯萎</label>
+      <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupAppearance" value="葉片斑點"> 葉片斑點</label>
+      <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupAppearance" value="看起來健康"> 看起來健康</label>
+    </div>
+
+    <label><b>④ 是否開花 🌸</b></label>
+    <div style="margin-bottom: 15px; padding-left: 5px;">
+      <label style="margin-right: 15px;"><input type="radio" name="setupBloom" value="有"> 有</label>
+      <label><input type="radio" name="setupBloom" value="沒有" checked> 沒有</label>
+    </div>
+
+    <label><b>⑤ 是否結果 🍅</b></label>
+    <div style="margin-bottom: 15px; padding-left: 5px;">
+      <label style="margin-right: 15px;"><input type="radio" name="setupFruit" value="有"> 有</label>
+      <label><input type="radio" name="setupFruit" value="沒有" checked> 沒有</label>
+    </div>
+
+    <label><b>⑥ 生長進度 (可複選) 🌱</b></label>
+    <div style="margin-bottom: 15px; padding-left: 5px;">
+      <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupGrowth" value="葉片數五片以上"> 葉片數五片以上</label>
+      <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupGrowth" value="發芽"> 發芽</label>
+      <label style="display: block; margin: 5px 0;"><input type="checkbox" class="setupGrowth" value="都沒有"> 都沒有</label>
+    </div>
+
+    <label><b>⑦ 日照時間 ☀️</b></label>
+    <select id="setupSun" style="width: 100%; margin-bottom: 20px; padding: 8px; box-sizing: border-box;">
+      <option value="0~2小時">0~2 小時</option>
+      <option value="3~5小時">3~5 小時</option>
+      <option value="6小時以上">6 小時以上</option>
+    </select>
+
+    <button onclick="addPlant()" style="width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">確認新增</button>
+    <button onclick="closeAllModal()" style="width: 100%; padding: 10px; margin-top: 10px; background: #888; color: white; border: none; border-radius: 5px; cursor: pointer;">取消</button>
+  </div>
+</div>
+
+<div class="modal" id="diaryModal">
+  <div class="box">
+    <h3>今日紀錄</h3>
+
+    <label>💧 今日澆水次數</label>
+    <select id="diaryWater" style="width:100%; margin-bottom:10px; padding:8px;">
+      <option value="0次">0 次</option>
+      <option value="1次">1 次</option>
+      <option value="2次">2 次</option>
+      <option value="3次">3 次</option>
+    </select>
+
+    <label>🌿 植物外觀（可複選）</label>
+    <div style="margin-bottom:10px; text-align:left;">
+      <label style="display:block; margin:4px 0;"><input type="checkbox" class="diaryAppearance" value="葉片發黃"> 葉片發黃</label>
+      <label style="display:block; margin:4px 0;"><input type="checkbox" class="diaryAppearance" value="葉片枯萎"> 葉片枯萎</label>
+      <label style="display:block; margin:4px 0;"><input type="checkbox" class="diaryAppearance" value="葉片斑點"> 葉片斑點</label>
+      <label style="display:block; margin:4px 0;"><input type="checkbox" class="diaryAppearance" value="看起來健康"> 看起來健康</label>
+    </div>
+
+    <label>🌸 是否開花</label>
+    <div style="margin-bottom:10px; text-align:left;">
+      <label style="margin-right:15px;"><input type="radio" name="diaryBloom" value="有"> 有</label>
+      <label><input type="radio" name="diaryBloom" value="沒有" checked> 沒有</label>
+    </div>
+
+    <label>🍅 是否結果</label>
+    <div style="margin-bottom:10px; text-align:left;">
+      <label style="margin-right:15px;"><input type="radio" name="diaryFruit" value="有"> 有</label>
+      <label><input type="radio" name="diaryFruit" value="沒有" checked> 沒有</label>
+    </div>
+
+    <label>🌱 生長進度（可複選）</label>
+    <div style="margin-bottom:10px; text-align:left;">
+      <label style="display:block; margin:4px 0;"><input type="checkbox" class="diaryGrowth" value="發芽"> 發芽</label>
+      <label style="display:block; margin:4px 0;"><input type="checkbox" class="diaryGrowth" value="開花"> 開花</label>
+      <label style="display:block; margin:4px 0;"><input type="checkbox" class="diaryGrowth" value="結果"> 結果</label>
+      <label style="display:block; margin:4px 0;"><input type="checkbox" class="diaryGrowth" value="收成"> 收成</label>
+      <label style="display:block; margin:4px 0;"><input type="checkbox" class="diaryGrowth" value="無明顯變化"> 無明顯變化</label>
+    </div>
+
+    <label>☀️ 日照時間</label>
+    <select id="diarySun" style="width:100%; margin-bottom:10px; padding:8px;">
+      <option value="0~2小時">0~2 小時</option>
+      <option value="3~5小時">3~5 小時</option>
+      <option value="6小時以上">6 小時以上</option>
+    </select>
+
+    <label>💬 今天想說的話</label>
+    <textarea id="diaryText" placeholder="今天植物怎麼樣呢..."></textarea>
+
+    <div style="margin: 10px 0; font-size: 0.9em;">
+      <p id="weatherDisplay">載入天氣...</p>
+      <select id="citySelect" onchange="getWeatherByCity()" style="display:none; margin: 5px auto; padding: 5px; border-radius: 5px;">
+        <option value="">-- 手動選擇地區 --</option>
+        <optgroup label="北部地區">
+          <option value="25.03,121.56">台北市</option>
+          <option value="25.01,121.46">新北市</option>
+          <option value="24.99,121.30">桃園市</option>
+          <option value="24.81,120.96">新竹市</option>
+          <option value="24.83,121.01">新竹縣</option>
+          <option value="25.12,121.73">基隆市</option>
+          <option value="24.75,121.75">宜蘭縣</option>
+        </optgroup>
+        <optgroup label="中部地區">
+          <option value="24.14,120.67">台中市</option>
+          <option value="24.56,120.81">苗栗縣</option>
+          <option value="24.05,120.51">彰化縣</option>
+          <option value="23.90,120.68">南投縣</option>
+          <option value="23.70,120.43">雲林縣</option>
+        </optgroup>
+        <optgroup label="南部地區">
+          <option value="22.99,120.21">台南市</option>
+          <option value="22.61,120.30">高雄市</option>
+          <option value="23.48,120.44">嘉義市</option>
+          <option value="23.45,120.25">嘉義縣</option>
+          <option value="22.67,120.48">屏東縣</option>
+        </optgroup>
+        <optgroup label="東部及離島">
+          <option value="23.97,121.60">花蓮縣</option>
+          <option value="22.75,121.14">台東縣</option>
+          <option value="23.56,119.56">澎湖縣</option>
+          <option value="24.43,118.31">金門縣</option>
+          <option value="26.15,119.92">連江縣(馬祖)</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <input type="file" id="photo" accept="image/*">
+    <button onclick="saveDiary()">儲存日記</button>
+    <button onclick="closeAllModal()" style="background:#888;">關閉</button>
+    <p id="aiReply"></p>
+  </div>
+</div>
+
+<div class="modal" id="historyModal">
+  <div class="box">
+    <h3>歷史紀錄</h3>
+    <input type="date" id="historyDate" onchange="loadHistory()">
+    <div id="historyList"></div>
+    <button onclick="closeAllModal()" style="margin-top:10px;">關閉</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
